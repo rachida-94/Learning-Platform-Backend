@@ -1,0 +1,23 @@
+const jwt = require ('jsonwebtoken')
+
+function verifyAuthentication(req,res,next){
+    try {
+        let token = req.headers.authorization
+
+        if(!token || !token.startsWith('Bearer')){
+            return res.status(401).json({error: 'No token or incorrect format.'})
+        }
+        token = token.split('').pop().trim()
+
+        const jwtSecretkey = process.env.JWT_SECRET
+        const payload = jwt.verify(token,jwtSecretkey)
+
+        req.user = payload.data
+
+    } catch (error) {
+        console.error(error)
+        res.status(401).json({error:'Token is invalid'})
+    }
+}
+
+module.exports = verifyAuthentication

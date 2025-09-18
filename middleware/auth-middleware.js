@@ -7,12 +7,13 @@ function verifyAuthentication(req,res,next){
         if(!token || !token.startsWith('Bearer')){
             return res.status(401).json({error: 'No token or incorrect format.'})
         }
-        token = token.split('').pop().trim()
+        token = token.split(' ')[1].trim()
 
         const jwtSecretkey = process.env.JWT_SECRET
         const payload = jwt.verify(token,jwtSecretkey)
 
         req.user = payload.data
+        next()
 
     } catch (error) {
         console.error(error)

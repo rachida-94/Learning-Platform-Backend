@@ -1,5 +1,6 @@
 const mongoose =require ('mongoose')
 const bcrypt =require('bcrypt')
+const {Schema} = mongoose
 const UserSchema = new Schema({
     username:{
         type:String,
@@ -20,13 +21,20 @@ const UserSchema = new Schema({
         type:String,
         required:[true,'please enter your role'],
         enum:['student','teacher','admin'],
-        defaut:'student'
+        default:'student'
     },
-    isApproved:{type:Boolean,default:false}
-})
+    isApproved:
+    {type:Boolean,
+        default:true},
+    inviteCode:
+    {type:String,
+     default:null   
+    }
+    
+},{timestamps:true})
 
 UserSchema.pre("save",async function(next){
-  if(this.isNew || this. isModified('password')){
+  if(this.isNew || this.isModified('password')){
     const saltRounds =10
     this.password = await bcrypt.hash(this.password, saltRounds)
 }

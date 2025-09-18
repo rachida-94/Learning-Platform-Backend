@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const {Schema} = mongoose
 const Exercise = require('./Exercise')
 
 const SubmissionSchema= new Schema({
@@ -6,20 +7,20 @@ const SubmissionSchema= new Schema({
     // connect submission with exercise
     exercise:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Exercise',
+        ref:'exercise',
         required:true
     },
     // link to the student who submitted the exercise
     student:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
+        ref:'user',
         required:true
     },
 
     answer:{type:String,required:true},
     grade:{type:Number,default:null},
     feedback:{type:String , default:''},
-    submitedAt: {type:Date , default:Date.now}
+    submittedAt: {type:Date , default: Date.now}
 })
 const Submission = mongoose.model('submission',SubmissionSchema)
 

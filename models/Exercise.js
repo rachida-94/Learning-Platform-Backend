@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
-
+const {Schema} = mongoose
+const User = require('./User')
 const exerciseSchema= new Schema(
     {
-    Subject:{
+    title:{
         type:String,
         required:true,
         
@@ -14,7 +15,7 @@ const exerciseSchema= new Schema(
     
     teacher:{ //Reference to the teacher who created the exercise also connects the exercise with User(teacher)
         type : mongoose.Schema.Types.ObjectId,
-        ref:'User',
+        ref:'user',
         required:true
     },
     createdAt:{type :Date,default:Date.now}  

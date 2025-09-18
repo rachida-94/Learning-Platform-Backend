@@ -1,4 +1,4 @@
-const User = require("../modules/User");
+const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
 async function getUser(req, res) {
@@ -21,14 +21,31 @@ async function getUser(req, res) {
 async function registerUser(req, res) {
   try {
     const foundUser = await User.findOne({ email: req.body.email });
+    const allowedRoles = ["student", "teacher"];
+    const role = allowedRoles.includes(req.body.role)
+      ? req.body.role
+      : "student";
 
     if (foundUser !== null)
       return res.status(400).json({ error: "This user already exists." });
 
+    let isApproved = false;
+    if (role === "teacher") {
+      const inviteCode = req.body.inviteCode;
+      const validCodes = process.env.TEACHER_INVITE_CODES;
+      if (!validCodes.includes(inviteCode)) {
+        return res
+          .status(403)
+          .json({ error: "Invalid invite code for teacher registration" });
+      }
+      isApproved = true;
+    }
     const createdUser = new User({
       username: req.body.username,
       email: req.body.email,
-      password: req.body.password, //This will trigger the pre-save hook
+      password: req.body.password,
+      role,
+      isApproved, //This will trigger the pre-save hook
     });
 
     await createdUser.save();
@@ -44,7 +61,16 @@ async function registerUser(req, res) {
       { expiresIn: "1h" },
       (error, token) => {
         if (error) throw error;
-        res.status(200).json({ success: "User created successfully.", token });
+        res.status(200).json({
+          success: "User created successfully.",
+          token,
+          user: {
+            _id: createdUser._id,
+            username: createdUser.username,
+            role: createdUser.role,
+            isApproved: createdUser.isApproved,
+          },
+        });
       }
     );
   } catch (error) {
@@ -55,8 +81,9 @@ async function registerUser(req, res) {
 
 async function loginUser(req, res) {
   try {
-    const foundUser = await User.findOne({ email: req.body.email });
-
+    const email = req.body.email.trim().toLowerCase()
+    const foundUser = await User.findOne({email});
+     
     if (!foundUser)
       return res.status(400).json({ error: "Incorrect email or password" });
 
@@ -64,11 +91,21 @@ async function loginUser(req, res) {
 
     if (!isPasswordCorrect)
       return res.status(400).json({ error: "Incorrect email or password" });
+    console.log(isPasswordCorrect)
+    if (foundUser.role === "teacher" && !foundUser.isApproved) {
+      return res
+        .status(403)
+        .json({ error: "Your account is awaiting admin approval." });
+  
+    
+
+    }
+        
 
     const jwtSecretkey = process.env.JWT_SECRET;
     const payload = {
-      _id: createdUser._id,
-      role: createdUser.role,
+      _id: foundUser._id,
+      role: foundUser.role,
     };
     jwt.sign(
       { data: payload },
@@ -76,7 +113,9 @@ async function loginUser(req, res) {
       { expiresIn: "1h" },
       (error, token) => {
         if (error) throw error;
-        res.status(200).json({ success: "User logged insuccessfully.", token });
+        res
+          .status(200)
+          .json({ success: "User logged in successfully.", token });
       }
     );
   } catch (error) {

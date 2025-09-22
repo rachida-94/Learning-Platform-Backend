@@ -10,7 +10,7 @@ const submissionRouter = require('./routes/submissionRouter')
 const exerciseRouter = require('./routes/exerciseRoute')
 const cors = require('cors')
 app.use(cors({
-  origin: 'http://localhost:5000', // allow frontend
+  origin: 'http://localhost:5000', 
   credentials: true,
 }))
 app.use(express.json())

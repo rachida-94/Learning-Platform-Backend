@@ -18,9 +18,9 @@ const exerciseSchema= new Schema(
         ref:'user',
         required:true
     },
-    createdAt:{type :Date,default:Date.now}  
+    
 
-}
+},{timestamps:true}
 )
 const Exercise = mongoose.model('exercise',exerciseSchema)
 

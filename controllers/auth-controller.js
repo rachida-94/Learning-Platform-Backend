@@ -9,9 +9,13 @@ async function getUser(req, res) {
         .json({ error: "You must be logged in to see this." });
 
     const foundUser = await User.findById(req.user._id).select(
-      "-password -role"
+      "-password "
     );
-    res.status(200).json(foundUser);
+    res.status(200).json({
+      id: foundUser._id,
+      name: foundUser.username,
+      email: foundUser.email,
+      role: foundUser.role,});
   } catch (error) {
     console.error(error);
     res.status(400).json({ error: error.message });
@@ -58,7 +62,7 @@ async function registerUser(req, res) {
     jwt.sign(
       { data: payload },
       jwtSecretkey,
-      { expiresIn: "1h" },
+      { expiresIn: "1d" },
       (error, token) => {
         if (error) throw error;
         res.status(200).json({
@@ -115,7 +119,15 @@ async function loginUser(req, res) {
         if (error) throw error;
         res
           .status(200)
-          .json({ success: "User logged in successfully.", token });
+          .json({ success: "User logged in successfully.", token,
+            user:{
+              id:foundUser._id,
+              username:foundUser.username,
+              email:foundUser.email,
+              role:foundUser.role,
+              isApproved: foundUser.isApproved,
+            }
+           });
       }
     );
   } catch (error) {

@@ -16,8 +16,8 @@ async function createSubmission (req,res){ // student can submit the exercise
             student:req.user._id,
             answer
         })
-        submission.save()
-        res.status(200).json(submission)
+       const savedSubmission= await submission.save()
+        res.status(200).json(savedSubmission)
  } 
     
     catch (error) {
@@ -35,7 +35,7 @@ async function getSubmissionsByExercise(req,res){
        if(!exercise) 
         return res.status(400).json({error:'Exercise not found'})
     // Only the teacher who created the exercise can see the submission 
-    if(req.user.role !== 'teacher'|| exercise.teacher.equals(req.user._id))
+    if(req.user.role !== 'teacher'|| !exercise.teacher.equals(req.user._id))
         return res.status(403).json({error:'not authorized to see the submission'})
 
        const submissions = await Submission.find({exercise:req.params.exerciseId}).populate('student','username')//we use populate to get the student details
@@ -59,6 +59,13 @@ async function gradeSubmission(req,res){
             return res.status(403).json({error:'Not authorized to grade this submission'})
         submission.grade = grade
         submission.feedback = feedback
+        if (grade !== undefined) submission.grade = grade
+        if (feedback !== undefined) submission.feedback = feedback
+
+        if (grade === undefined && feedback === undefined) {
+         return res.status(400).json({ error: 'No grade or feedback provided' })
+          }
+
         await submission.save()
         res.json({message:'Submission graded successfully',submission})
     } catch (error) {
@@ -82,7 +89,7 @@ async function getMySubmissionsById(req,res){
 async function getSubmissions(req,res){
     try {const submissions = await Submission.find({student:req.user._id}).populate('exercise','title description')
     res.json(submissions)
-        
+       console.log(submissions) 
     } catch (error) {
         res.status(500).json({error:error.message})
     }

@@ -19,9 +19,9 @@ const SubmissionSchema= new Schema({
 
     answer:{type:String,required:true},
     grade:{type:Number,default:null},
-    feedback:{type:String , default:''},
-    submittedAt: {type:Date , default: Date.now}
-})
+    feedback:{type:String , default:''}
+    
+},{timestamps:true})
 const Submission = mongoose.model('submission',SubmissionSchema)
 
 module.exports = Submission

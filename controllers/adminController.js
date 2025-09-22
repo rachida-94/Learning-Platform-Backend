@@ -47,7 +47,7 @@ async function getAllExercises(req,res){
 
 async function deleteExercise(req,res){
     try {
-        const deletedExercise = await Exercise.findByIdAndDelete(req.params.userId)
+        const deletedExercise = await Exercise.findByIdAndDelete(req.params.exerciseId)
         if(!deletedExercise)
          return res.status(404).json({error:'Exercise not found'})
         res.json({message:'Exercise deleted successfully'})
@@ -66,7 +66,7 @@ async function getAllSubmissions(req,res){
 }
 async function deleteSubmission(req,res){
    try { 
-    const deletedSubmission = await Submission.findByIdAndDelete(req.params.SubmissionId)
+    const deletedSubmission = await Submission.findByIdAndDelete(req.params.submissionId)
     if (!deletedSubmission)
         return res.status(404).json({error:'No submission found'})
     res.json({message:'Submission deleted successfully'})

@@ -5,7 +5,7 @@ async function createExercise(req, res) {
     //Only teachers can create the exercise so we need to check the role first
     if (req.user.role !== "teacher")
       return res
-        .satus(403)
+        .status(403)
         .json({ error: "Only teachers can create exercise" });
     const { title, description } = req.body;
     //create new user
@@ -14,7 +14,7 @@ async function createExercise(req, res) {
       description,
       teacher: req.user._id,
     });
-    const savedExercise= await exercise.save();
+    const savedExercise = await exercise.save();
     res.status(201).json(savedExercise);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -25,7 +25,10 @@ async function createExercise(req, res) {
 
 async function getExercises(req, res) {
   try {
-    const exercises = await Exercise.find().populate("teacher","username email"); // we use populate so we can get the teacher that created the exercise
+    const exercises = await Exercise.find().populate(
+      "teacher",
+      "username email"
+    ); // we use populate so we can get the teacher that created the exercise
     res.status(200).json(exercises);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -36,7 +39,10 @@ async function getExercises(req, res) {
 
 async function getExerciseById(req, res) {
   try {
-    const exercise = await Exercise.findById(req.params.id).populate("teacher","username email");
+    const exercise = await Exercise.findById(req.params.id).populate(
+      "teacher",
+      "username email"
+    );
     if (!exercise) return res.status(404).json({ error: "Exercise not found" });
     res.status(200).json(exercise);
   } catch (error) {
@@ -75,10 +81,16 @@ async function deleteExercise(req, res) {
     const exercise = await Exercise.findById(req.params.id);
     if (!exercise)
       return res.status(400).json({ error: "Exercise not found with this ID" });
-    if (req.user.role !== "teacher" || !exercise.teacher.equals(req.user._id))
+    const isTeacherOwner =
+      req.user.role === "teacher" && exercise.teacher.equals(req.user._id);
+    const isAdmin = req.user.role === "admin";
+
+    if (!isTeacherOwner && !isAdmin) {
       return res
         .status(403)
         .json({ error: "Not authorized to delete this exercise" });
+    }
+
     await exercise.deleteOne();
     res.json({ message: "exercise deleted successfully" });
   } catch (error) {

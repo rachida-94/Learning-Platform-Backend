@@ -28,7 +28,8 @@ const UserSchema = new Schema({
         default:true},
     inviteCode:
     {type:String,
-     default:null   
+     default:null,
+     select:false   
     }
     
 },{timestamps:true})

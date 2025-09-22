@@ -61,6 +61,14 @@ title: "Math Problem 1",
 description: "Solve 5 + 7",
 teacher: teacher._id,
 });
+
+const exercise3 = new Exercise({
+title: "Math Problem 4",
+description: "Solve 5 + 9",
+teacher: teacher._id,
+});
+
+
 const exercise2 = new Exercise({
 title: "English Task 1",
 description: "Write a short paragraph about your favorite animal",
@@ -68,6 +76,7 @@ teacher: teacher._id,
 });
 await exercise1.save();
 await exercise2.save();
+await exercise3.save()
 
 // 6. Create submissions
 const submission1 = new Submission({

@@ -12,6 +12,6 @@ router.get('/exercises',verifyAuthentication,adminOnly,adminController.getAllExe
 router.delete('/exercises/:exerciseId',verifyAuthentication,adminOnly,adminController.deleteExercise)
 
 router.get('/submissions',verifyAuthentication,adminOnly,adminController.getAllSubmissions)
-router.delete('/submission/:submissionId',verifyAuthentication,adminOnly,adminController.deleteSubmission)
+router.delete('/submissions/:submissionId',verifyAuthentication,adminOnly,adminController.deleteSubmission)
 
 module.exports = router

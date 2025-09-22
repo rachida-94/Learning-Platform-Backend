@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const exerciseController = require('../controllers/exercise-controller')
-const checkRole = require('../middleware/role-middleware')
+
 const verifyAuthentication = require('../middleware/auth-middleware')
 
 

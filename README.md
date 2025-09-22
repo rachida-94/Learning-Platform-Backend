@@ -40,3 +40,7 @@ DELETE /api/admin/exercises/:exerciseId   // Delete a specific exercise
 GET    /api/admin/submissions             // Get all submissions
 DELETE /api/admin/submissions/:submissionId   // Delete a specific submission
 
+
+
+
+this repo for my frontend : https://github.com/rachida-94/Learning-Platform-Frontend.git

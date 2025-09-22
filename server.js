@@ -10,7 +10,7 @@ const submissionRouter = require('./routes/submissionRouter')
 const exerciseRouter = require('./routes/exerciseRoute')
 const cors = require('cors')
 app.use(cors({
-  origin: 'http://localhost:5000', 
+  origin: ['http://localhost:5000','https://learning-platform-frontend-ejca.onrender.com' ],
   credentials: true,
 }))
 app.use(express.json())
